@@ -173,7 +173,14 @@ def quick_select(arr: List[int], low: int, high: int, k: int) -> int:
         else:
             return quick_select(arr, pi + 1, high, k)
 
-
+def quick_select_wrapper(arr: List[int], k: int = None) -> int:
+    if not arr:
+        return None
+    if k is None:
+        k = len(arr) // 2  # median
+    arr_copy = arr.copy()
+    return quick_select(arr_copy, 0, len(arr_copy) - 1, k)
+    
 # ------------------------------ Quick Sort ------------------------------
 def quick_sort(arr: List[int]) -> List[int]:
     """
@@ -261,10 +268,11 @@ PURE_FUNCS = {
     "merge": merge_sort,
     "quick": quick_sort,
     "radix": radix_sort_lsd,
+    "quickselect": quick_select_wrapper,
 }
 
 # ------------------------------ Runtime Comparison ------------------------------
-def compare_algorithms(algos, data):
+def compare_algorithms(algos, data, k=None):
     results = {}
     for name in algos:
         func = PURE_FUNCS.get(name)
@@ -273,11 +281,14 @@ def compare_algorithms(algos, data):
             continue
         test_data = data.copy()
         start = time.time()
-        func(test_data)
-        end = time.time()
-        runtime = end - start
-        results[name] = runtime
-        print(f"{name.title()} Sort finished in {runtime:.6f} seconds")
+    if name == "quickselect":
+            func(test_data, k)
+    else:
+            func(test_data)
+    end = time.time()
+    runtime = end - start
+    results[name] = runtime
+    print(f"{name.title()} Sort finished in {runtime:.6f} seconds")
     return results
 
 def plot_results(results):
@@ -296,5 +307,13 @@ if __name__ == "__main__":
         data = [random.randint(1, 1000) for _ in range(5000)]
     else:
         data = list(map(int, choice.split()))
-    results = compare_algorithms([a.strip() for a in algos], data)
+   
+    # Ask for k if QuickSelect is selected
+    if "quickselect" in [a.strip() for a in algos]:
+        k_input = input(f"Enter k for QuickSelect (0 to {len(data)-1}, default median): ").strip()
+        k = int(k_input) if k_input.isdigit() and 0 <= int(k_input) < len(data) else None
+    else:
+        k = None
+
+    results = compare_algorithms([a.strip() for a in algos], data, k)
     plot_results(results)
