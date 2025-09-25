@@ -1,4 +1,6 @@
 import time
+import random
+import matplotlib.pyplot as plt
 from typing import List
 
 # ------------------------------ Bubble Sort ------------------------------
@@ -260,3 +262,39 @@ PURE_FUNCS = {
     "quick": quick_sort,
     "radix": radix_sort_lsd,
 }
+
+# ------------------------------ Runtime Comparison ------------------------------
+def compare_algorithms(algos, data):
+    results = {}
+    for name in algos:
+        func = PURE_FUNCS.get(name)
+        if not func:
+            print(f"Unknown algorithm: {name}")
+            continue
+        test_data = data.copy()
+        start = time.time()
+        func(test_data)
+        end = time.time()
+        runtime = end - start
+        results[name] = runtime
+        print(f"{name.title()} Sort finished in {runtime:.6f} seconds")
+    return results
+
+def plot_results(results):
+    names = list(results.keys())
+    times = list(results.values())
+    plt.bar(names, times)
+    plt.ylabel("Runtime (seconds)")
+    plt.title("Sorting Algorithm Comparison")
+    plt.show()
+
+# ------------------------------ Main ------------------------------
+if __name__ == "__main__":
+    algos = input("Enter algorithms (comma separated): ").strip().lower().split(",")
+    choice = input("Enter numbers separated by space (or type 'random'): ").strip()
+    if choice == "random":
+        data = [random.randint(1, 1000) for _ in range(5000)]
+    else:
+        data = list(map(int, choice.split()))
+    results = compare_algorithms([a.strip() for a in algos], data)
+    plot_results(results)
