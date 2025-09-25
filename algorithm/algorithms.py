@@ -281,14 +281,14 @@ def compare_algorithms(algos, data, k=None):
             continue
         test_data = data.copy()
         start = time.time()
-    if name == "quickselect":
+        if name == "quickselect":
             func(test_data, k)
-    else:
+        else:
             func(test_data)
-    end = time.time()
-    runtime = end - start
-    results[name] = runtime
-    print(f"{name.title()} Sort finished in {runtime:.6f} seconds")
+        end = time.time()
+        runtime = end - start
+        results[name] = runtime
+        print(f"{name.title()} Sort finished in {runtime:.6f} seconds")
     return results
 
 def plot_results(results):
