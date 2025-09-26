@@ -300,7 +300,7 @@ def plot_results(results):
     plt.show()
 
 # ------------------------------ Main ------------------------------
-if __name__ == "__main__":
+def main():
     algos = input("Enter algorithms (comma separated): ").strip().lower().split(",")
     choice = input("Enter numbers separated by space (or type 'random'): ").strip()
     if choice == "random":
@@ -317,3 +317,13 @@ if __name__ == "__main__":
 
     results = compare_algorithms([a.strip() for a in algos], data, k)
     plot_results(results)
+
+
+if __name__ == "__main__":
+    while True:
+        main()
+        again = input("\nRun again? (y/n): ").strip().lower()
+        if again != "y":
+            print("Goodbye!")
+            break
+
