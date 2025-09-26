@@ -30,20 +30,33 @@ def bucket_sort(arr: List[float]) -> List[float]:
     Space: O(n + k). Stable if stable sub-sorts are used.
     """
     n = len(arr)
-    if n == 0:
+    if n <= 1:
         return arr
+
+    mn, mx = min(arr), max(arr)
+    if mn == mx:
+        # All elements identical
+        return arr
+
+    span = mx - mn
     buckets = [[] for _ in range(n)]
+
+    # Scale x to bucket index in [0, n-1]
     for x in arr:
-        idx = int(n * x)
-        if idx == n:
+        idx = int((x - mn) / span * n)
+        if idx == n:  # clamp edge case when x == mx
             idx = n - 1
         buckets[idx].append(x)
-    for i in range(n):
-        buckets[i].sort()
-    result = []
+
+    # Sort each bucket (Timsort is stable)
     for b in buckets:
-        result.extend(b)
-    return result
+        b.sort()
+
+    # Concatenate
+    out: List[float] = []
+    for b in buckets:
+        out.extend(b)
+    return out
 
 
 # ------------------------------ Counting Sort ------------------------------
@@ -279,16 +292,24 @@ def compare_algorithms(algos, data, k=None):
         if not func:
             print(f"Unknown algorithm: {name}")
             continue
+
         test_data = data.copy()
         start = time.time()
-        if name == "quickselect":
-            func(test_data, k)
-        else:
-            func(test_data)
+        try:
+            if name == "quickselect":
+                func(test_data, k)
+            else:
+                func(test_data)
+            ok = True
+        except Exception as e:
+            ok = False
+            print(f"{name.title()} failed: {e}")
         end = time.time()
+
         runtime = end - start
-        results[name] = runtime
-        print(f"{name.title()} Sort finished in {runtime:.6f} seconds")
+        if ok:
+            print(f"{name.title()} finished in {runtime:.6f} seconds")
+            results[name] = runtime
     return results
 
 def plot_results(results):
